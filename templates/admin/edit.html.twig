@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block body %}
+
+    <h1>Edit</h1>
+
+    {% include 'admin/_form.html.twig' with {'form': form, 'button_label': 'Edit'} only %}
+    {% include 'admin/_delete_form.html.twig' with {'identifier': user.id} only %}
+
+    <a href="{{ path('admin_users') }}">Cancel</a>
+
+{% endblock %}

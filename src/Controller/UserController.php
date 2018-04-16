@@ -1,0 +1,126 @@
+<?php
+/**
+ * User Controller
+ */
+namespace App\Controller;
+
+use App\Entity\Item;
+use App\Form\UserType;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+
+/**
+ * Class UserController
+ * @package App\Controller
+ *
+ * @Route("/profile", name="profile_")
+ * @Security("has_role('ROLE_USER')")
+ */
+class UserController extends Controller
+{
+    /**
+     * Stores an encoder interface to encode
+     * user password when signing up.
+     *
+     * @var UserPasswordEncoderInterface
+     */
+    private $encoder;
+
+    /**
+     * SecurityController constructor.
+     * @param UserPasswordEncoderInterface $encoder
+     */
+    public function __construct(UserPasswordEncoderInterface $encoder)
+    {
+        $this->encoder = $encoder;
+    }
+
+    /**
+     * Displays user index which display the current users profile.
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     *
+     * @Route("/", name="index")
+     */
+    public function index()
+    {
+        if ($this->getUser()->isAdmin())
+            return $this->redirectToRoute('admin_index');
+
+        $items = $this->getDoctrine()
+            ->getRepository(Item::class)
+            ->findBy([ 'username' => $this->getUser()->getUsername()]);
+
+        return $this->render(
+            'user/index.html.twig',
+            [
+                'items' => sizeof($items)
+            ]
+        );
+    }
+
+    /**
+     * Allows users to edit their information.
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     *
+     * @Route("/edit", name="edit")
+     */
+    public function edit(Request $request)
+    {
+        $user = $this->getUser();
+
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user->setPassword($this->encoder->encodePassword($user, $form->getData()->getPassword()));
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('profile_index');
+        }
+
+        $template = 'user/edit.html.twig';
+        if (!$user)
+            $template = 'errors/exception.html.twig';
+
+        return $this->render($template,
+            [
+                'user' => $user,
+                'form' => $form->createView()
+            ]
+        );
+    }
+
+    /**
+     * Allows users to delete their account.
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     *
+     * @Route("/{id}", name="delete")
+     * @Method("DELETE")
+     */
+    public function delete(Request $request)
+    {
+        $user = $this->getUser();
+
+        if (!$this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token')))
+            return $this->redirectToRoute('home');
+
+        $this->get('security.token_storage')->setToken(null);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($user);
+        $em->flush();
+
+        return $this->redirectToRoute('home');
+    }
+}

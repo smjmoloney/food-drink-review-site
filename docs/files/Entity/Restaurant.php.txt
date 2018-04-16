@@ -1,0 +1,80 @@
+<?php
+/**
+ * Restaurant Entity
+ */
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Class Restaurant
+ * @package App\Entity
+ *
+ * @ORM\Entity(repositoryClass="App\Repository\RestaurantRepository")
+ */
+class Restaurant
+{
+    /**
+     * Auto-incremented integer for location id.
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+    /**
+     * Restaurant name.
+     * @ORM\Column(type="string")
+     */
+    private $restaurant;
+    /**
+     * Location name.
+     * @ORM\Column(type="string")
+     */
+    private $location;
+
+    /**
+     * Returns the id of a generated row.
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Returns the restaurant of a generated row.
+     * @return mixed
+     */
+    public function getRestaurant()
+    {
+        return $this->restaurant;
+    }
+
+    /**
+     * Set the restaurant of a generated row.
+     * @param $restaurant
+     */
+    public function setRestaurant($restaurant): void
+    {
+        $this->restaurant = $restaurant;
+    }
+
+    /**
+     * Returns the restaurant location of a generated row.
+     * @return mixed
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * Sets the restaurant location of a generated row.
+     * @param $location
+     */
+    public function setLocation($location): void
+    {
+        $this->location = $location;
+    }
+}
+

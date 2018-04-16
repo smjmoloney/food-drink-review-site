@@ -1,0 +1,68 @@
+<?php
+/**
+ * User Fixture
+ */
+namespace App\DataFixtures\ORM;
+
+use App\Entity\User;
+use Doctrine\Bundle\FixturesBundle\ORMFixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+
+/**
+ * Class LoadUsers
+ * @package App\DataFixtures\ORM
+ */
+class LoadUsers implements ORMFixtureInterface
+{
+    /**
+     * Stores an encoder interface to encode
+     * user password when signing up.
+     *
+     * @var UserPasswordEncoderInterface
+     */
+    private $encoder;
+
+    /**
+     * SecurityController constructor.
+     * @param UserPasswordEncoderInterface $encoder
+     */
+    public function __construct(UserPasswordEncoderInterface $encoder)
+    {
+        $this->encoder = $encoder;
+    }
+
+    /**
+     * Load sample selection of users into database.
+     *
+     * @param ObjectManager $manager
+     */
+    public function load(ObjectManager $manager)
+    {
+        $manager->persist($this->createUser("admin", "admin", ['ROLE_ADMIN']));
+
+        for ($i = 0; $i < 10; $i++)
+            $manager->persist($this->createUser("user" . $i, "user"));
+
+        $manager->flush();
+    }
+
+    /**
+     * Creates and returns a user to be persisted
+     * during the load function.
+     *
+     * @param $username
+     * @param $password
+     * @param array $roles
+     * @return User
+     */
+    private function createUser($username, $password, $roles = ['ROLE_USER']): User
+    {
+        $user = new User();
+        $user->setUsername($username);
+        $user->setPassword($this->encoder->encodePassword($user, $password));
+        $user->setRoles($roles);
+
+        return $user;
+    }
+}

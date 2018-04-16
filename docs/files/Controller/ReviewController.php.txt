@@ -1,0 +1,66 @@
+<?php
+/**
+ * Review Controller
+ */
+namespace App\Controller;
+
+use App\Entity\Item;
+use App\Entity\Review;
+use App\Form\ReviewType;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+
+/**
+ * Class ReviewController
+ * @package App\Controller
+ *
+ * @Security("has_role('ROLE_USER')")
+ * @Route("/items/review", name="review_")
+ */
+class ReviewController extends Controller
+{
+    /**
+     * @param Request $request
+     * @param Item $item
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     *
+     * @Route("/{id}", name="new")
+     * @Method({"GET", "POST"})
+     */
+    public function new(Request $request, Item $item)
+    {
+        $review = new Review();
+
+        $form = $this->createForm(ReviewType::class, $review);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $id = $item->getId();
+            $data = $form->getData();
+
+            $item->setRating($data->getRating());
+
+            $review->setItem($item);
+            $review->setUsername($this->getUser()->getUsername());
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($review);
+            $em->flush();
+
+            $this->addFlash('notice', 'Review created successfully.');
+
+            return $this->redirectToRoute('item_show', ['id' => $id]);
+        }
+
+        return $this->render('review/new.html.twig', [
+            'review' => $review,
+            'form' => $form->createView()
+        ]);
+    }
+}
+

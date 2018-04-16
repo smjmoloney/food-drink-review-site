@@ -1,0 +1,13 @@
+<div class="col-md-4">
+    <div class="card mb-4 box-shadow">
+        <div class="card-body">
+            <a href="{{ path('item_show', {'id': item.id}) }}">
+                <p>{{ item.name }}</p>
+            </a>
+            <p class="card-text">{{ item.description }}</p>
+            {% if item.style.style is defined %}
+            <p class="card-text">{{ item.style }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>

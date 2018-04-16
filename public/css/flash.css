@@ -1,0 +1,12 @@
+.flash {
+    padding: 1rem;
+    margin: 1rem;
+}
+
+.flash-error {
+    background-color: pink;
+}
+
+.flash-notice {
+    background-color: lightgreen;
+}

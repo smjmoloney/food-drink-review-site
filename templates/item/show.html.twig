@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Item{% endblock %}
+
+{% block body %}
+    {% include 'flash.html.twig' %}
+    <h3>{{ item.name }}</h3>
+    <p>Creator: {{ item.username }}</p>
+
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    <p>Score: {{ item.rating }}</p>
+    {% endif %}
+
+    {% for review in reviews %}
+        <div style="padding: 1em; background-color: #aaa;">
+            <p>Review by {{ review.username }}</p>
+            <p>{{ review.text }}</p>
+            <p>{{ review.rating }}</p>
+        </div>
+        <br>
+    {% endfor %}
+
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        {% if 'app.user.username' == item.username %}
+        <a href="{{ path('item_edit', {'id': item.id}) }}">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+        </a>
+        {% include 'item/_delete_form.html.twig' with {'identifier': item.id} only %}
+        {% endif %}
+    {% endif %}
+
+    <a href="{{ path('review_new', {'id': item.id}) }}">
+        <button type="button" class="btn btn-sm btn-outline-secondary">Review</button>
+    </a>
+    <a href="{{ path('item_index') }}">
+        <button type="button" class="btn btn-sm btn-outline-secondary">Back</button>
+    </a>
+
+{% endblock %}

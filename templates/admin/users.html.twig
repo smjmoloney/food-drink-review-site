@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <h3>User index</h3>
+    <div class="album py-5 bg-light">
+        <div class="row">
+            {% for user in users %}
+                {% include 'admin/card.html.twig' %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <a href="{{ path('admin_index') }}">Return</a>
+
+{% endblock %}

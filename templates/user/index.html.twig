@@ -1,0 +1,6 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <h1>{{ app.user.username }}</h1>
+    <p><a href="{{ path('item_my_items') }}">My Items ({{ items }})</a></p>
+    <p><a href="{{ path('profile_edit') }}">Edit Profile</a></p>
+{% endblock %}

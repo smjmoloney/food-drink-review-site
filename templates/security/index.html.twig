@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% for flash_message in app.session.flashBag.get('notice') %}
+        <div class="flash flash-notice">
+            {{ flash_message }}
+        </div>
+    {% endfor %}
+    {% if error %}
+        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+    <h3>Login</h3>
+    <form action="{{ path('login') }}" method="post">
+        <input class="{{ class }}  %}" placeholder="Username" type="text" id="username" name="_username" value="{{ last_username }}" />
+        <input class="{{ class }}" placeholder="Password" type="password" id="password" name="_password" />
+
+        <button type="submit">Login</button>
+    </form>
+{% endblock %}

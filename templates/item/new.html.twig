@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Item{% endblock %}
+
+{% block body %}
+    {% include 'item/_form.html.twig' with {'form': form, 'button_label': 'Create'} only %}
+{% endblock %}

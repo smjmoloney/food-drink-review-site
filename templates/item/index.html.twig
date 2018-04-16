@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Item index{% endblock %}
+
+{% block body %}
+    <div class="album py-5 bg-light">
+        <div class="row">
+            {% for item in items %}
+                {% if item.visibility or app.user is not null %}
+                    {% include 'item/card.html.twig' %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

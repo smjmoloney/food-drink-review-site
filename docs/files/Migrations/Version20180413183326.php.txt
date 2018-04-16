@@ -1,0 +1,43 @@
+<?php declare(strict_types = 1);
+
+namespace DoctrineMigrations;
+
+use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\DBAL\Schema\Schema;
+
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+class Version20180413183326 extends AbstractMigration
+{
+    public function up(Schema $schema)
+    {
+        // this up() migration is auto-generated, please modify it to your needs
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+
+        $this->addSql('CREATE TABLE style (id INT AUTO_INCREMENT NOT NULL, style VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
+        $this->addSql('DROP INDEX IDX_E11EE94DBACD6074 ON items');
+        $this->addSql('DROP INDEX IDX_E11EE94DB1E7706E ON items');
+        $this->addSql('ALTER TABLE items ADD style VARCHAR(255) NOT NULL, ADD restaurant VARCHAR(255) NOT NULL, ADD visibility TINYINT(1) NOT NULL, ADD toppings LONGTEXT NOT NULL COMMENT \'(DC2Type:simple_array)\', ADD username VARCHAR(255) NOT NULL, ADD date DATETIME NOT NULL, DROP style_id, DROP restaurant_id, CHANGE des description LONGTEXT NOT NULL');
+        $this->addSql('DROP INDEX IDX_EB95123F64D218E ON restaurant');
+        $this->addSql('ALTER TABLE restaurant ADD location VARCHAR(255) NOT NULL, DROP location_id');
+        $this->addSql('ALTER TABLE review ADD date DATETIME NOT NULL');
+        $this->addSql('ALTER TABLE review ADD CONSTRAINT FK_794381C6126F525E FOREIGN KEY (item_id) REFERENCES items (id)');
+    }
+
+    public function down(Schema $schema)
+    {
+        // this down() migration is auto-generated, please modify it to your needs
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+
+        $this->addSql('DROP TABLE style');
+        $this->addSql('ALTER TABLE items ADD style_id INT DEFAULT NULL, ADD restaurant_id INT DEFAULT NULL, DROP style, DROP restaurant, DROP visibility, DROP toppings, DROP username, DROP date, CHANGE description des LONGTEXT NOT NULL COLLATE utf8mb4_unicode_ci');
+        $this->addSql('CREATE INDEX IDX_E11EE94DBACD6074 ON items (style_id)');
+        $this->addSql('CREATE INDEX IDX_E11EE94DB1E7706E ON items (restaurant_id)');
+        $this->addSql('ALTER TABLE restaurant ADD location_id INT DEFAULT NULL, DROP location');
+        $this->addSql('CREATE INDEX IDX_EB95123F64D218E ON restaurant (location_id)');
+        $this->addSql('ALTER TABLE review DROP FOREIGN KEY FK_794381C6126F525E');
+        $this->addSql('ALTER TABLE review DROP date');
+    }
+}
+
